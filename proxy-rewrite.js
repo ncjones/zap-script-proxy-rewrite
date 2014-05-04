@@ -42,50 +42,51 @@ var hostBasedRewriteRule = function (options) {
     return {
 
         matches: function (msg) {
-	        var header = msg.getRequestHeader(),
-		        hostName = header.getHostName();
+            var header = msg.getRequestHeader(),
+                hostName = header.getHostName();
             return hostName == host;
         },
 
         rewrite: function (msg) {
-	        var header = msg.getRequestHeader(),
-		        requestLine = header.getPrimeHeader(),
+            var header = msg.getRequestHeader(),
+                requestLine = header.getPrimeHeader(),
                 newRequestLine = requestLine.replace(source, target);
-		    println('rewriting request: ' + requestLine);
-		    for (key in headers) {
-			    header.setHeader(key, headers[key]);
-		    }
-		    msg.setRequestHeader(newRequestLine + '\n'
-                + header.getHeadersAsString());        
+            println('rewriting request: ' + requestLine);
+            for (key in headers) {
+                header.setHeader(key, headers[key]);
+            }
+            msg.setRequestHeader(newRequestLine + '\n'
+                + header.getHeadersAsString());
         }
 
     };
 };
 
 //===============================================
-// Rewrite rules 
+// Rewrite rules
+
 // Replace the following example rewrite rules with your own.
 
 var REWRITE_RULES = [
-	hostBasedRewriteRule({
+    hostBasedRewriteRule({
         host: 'mydomain', // hostname being matched on
-		source: 'https://mydomain/', // text to replace in request line
-		target: 'http://localhost:8000/', // replacement text for request line
-		headers: {
-			// headers to replace
-			'Host': 'localhost'
-		}
-	}),
-	hostBasedRewriteRule({
+        source: 'https://mydomain/', // text to replace in request line
+        target: 'http://localhost:8000/', // replacement text for request line
+        headers: {
+            // headers to replace
+            'Host': 'localhost'
+        }
+    }),
+    hostBasedRewriteRule({
         host: 'otherdomain', // hostname being matched on
-		source: 'http://otherdomain/', // text to replace in request line
-		target: 'http://localhost:8085/', // replacement text for request line
-		headers: {
-			// headers to replace
-			'Host': 'localhost',
-			'Authorization': 'api-key: abcd1234'
-		}
-	})
+        source: 'http://otherdomain/', // text to replace in request line
+        target: 'http://localhost:8085/', // replacement text for request line
+        headers: {
+            // headers to replace
+            'Host': 'localhost',
+            'Authorization': 'api-key: abcd1234'
+        }
+    })
 ];
 
 //===============================================
@@ -97,18 +98,18 @@ function getRewriteRule(msg) {
             return rewriteRule;
         }
     }
-	return null;
+    return null;
 }
 
 function proxyRequest(msg) {
-	var rule = getRewriteRule(msg);
-	if (rule) {
+    var rule = getRewriteRule(msg);
+    if (rule) {
         rule.rewrite(msg);
-	}
-	return true;
+    }
+    return true;
 }
 
 function proxyResponse(msg) {
-	return true;
+    return true;
 }
 
