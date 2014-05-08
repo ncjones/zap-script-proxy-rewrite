@@ -49,14 +49,13 @@ var hostBasedRewriteRule = function (options) {
 
         rewrite: function (msg) {
             var header = msg.getRequestHeader(),
-                requestLine = header.getPrimeHeader(),
-                newRequestLine = requestLine.replace(source, target);
-            println('rewriting request: ' + requestLine);
+                originalUri = header.getURI().toString(),
+                newUri = originalUri.replace(source, target);
+            println('rewriting request from "' + originalUri + '" to "' + newUri + '"');
+            header.setURI(new org.apache.commons.httpclient.URI(newUri, true));
             for (key in headers) {
                 header.setHeader(key, headers[key]);
             }
-            msg.setRequestHeader(newRequestLine + '\n'
-                + header.getHeadersAsString());
         }
 
     };
